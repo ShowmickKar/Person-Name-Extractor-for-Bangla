@@ -102,10 +102,18 @@ class BiLSTMModel(nn.Module):
         
     def forward(self, x):
         out, _ = self.bilstm(x)
+        # Reshape out to (batch_size * seq_len, hidden_size*2)
+        # out = out.reshape(-1, self.hidden_size * 2)
         out = self.fc(out)
         return out
 
 def train_model(model, train_loader, val_loader, criterion, optimizer, num_epochs, class_weights_tensor):
+    # print(f"Modes: {model}")
+    # print(f"Train Loader: {train_loader}")
+    # print(f"Val Loader: {val_loader}")
+    # print(f"Criterion: {criterion}")
+    # print(f"Optimizer: {optimizer}")
+    # print(f"Class Weights Tensor: {class_weights_tensor}")
     train_losses = []
     val_losses = []
 
@@ -115,11 +123,22 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, num_epoch
         for inputs, labels in train_loader:
             optimizer.zero_grad()
             outputs = model(inputs)
+            # print(f"OUTPUTS SHAPE: {outputs.shape}")
+            # print(f"Outputs: {outputs}")
             # Calculate class weights for the current batch
             class_weights_batch = class_weights_tensor[labels.view(-1)]
+            # print(f"CLASS WEIGHTS BATCH: {class_weights_batch}")
+            # print(f"CLASS WEIGHTS BATCH SHAPE: {class_weights_batch.shape}")
             # Define the loss function with class weights for the current batch
+
             criterion_batch = nn.CrossEntropyLoss(weight=class_weights_batch)
-            loss = criterion_batch(outputs.permute(0, 2, 1), labels)  # Permute to match the shape
+            # print(f"CRITERION BATCH: {criterion_batch}")
+            # print(f"Labels Shape: {labels.shape}")
+            # print(f"LABELS: {labels}")
+            labels_flattened = labels.view(-1)
+            # loss = criterion_batch(outputs.permute(0, 2, 1), labels_flattened)  # Permute to match the shape
+            # loss = criterion_batch(outputs, labels)
+            loss = criterion(outputs.view(-1, num_classes), labels_flattened)
             loss.backward()
             optimizer.step()
             running_loss += loss.item() * inputs.size(0)
@@ -239,19 +258,19 @@ print("Shape of the first sequence in train_labels_numeric:", train_labels_numer
 
 
 
-
 # Define LSTM Model
  
-# Calculate class weights
 from sklearn.utils.class_weight import compute_class_weight
+# Flatten the train_labels_numeric_tensor
+train_labels_flattened = train_labels_numeric_tensor.flatten()
 
-train_labels_tensor = torch.tensor(train_labels_numeric)
+# Convert the flattened tensor to a numpy array
+train_labels_numpy = train_labels_flattened.numpy()
 
-from sklearn.utils.class_weight import compute_class_weight
+# Compute class weights using compute_class_weight
+class_weights = compute_class_weight(class_weight='balanced', classes=np.unique(train_labels_numpy), y=train_labels_numpy)
 
-class_weights = compute_class_weight(class_weight='balanced', classes=np.unique(train_labels), y=train_labels_tensor)
-
-# Convert class weights to a PyTorch tensor
+# Convert class weights to PyTorch tensor
 class_weights_tensor = torch.tensor(class_weights, dtype=torch.float32)
 
 # Define the loss function with class weights
@@ -274,7 +293,7 @@ val_data = TensorDataset(torch.stack(val_padded_sequences), torch.tensor(val_lab
 batch_size = 32
 train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=batch_size)
-num_epochs = 1
+num_epochs = 10
 # Call the train_model function with the computed class weights tensor
 train_losses, val_losses = train_model(model, train_loader, val_loader, criterion, optimizer, num_epochs, class_weights_tensor)
 val_loss, all_predictions, all_labels = evaluate_model(model, val_loader, criterion)
