@@ -1,6 +1,6 @@
 # Person-Name-Extractor-for-Bangla
 
-This project implements a Bangla-Name-Extractor by finetuning DistilBERT on the Wikiann dataset for named entity recognition(NER). The dataset consists of three splits - train, test and validation, each containing tokenized text data along with correspondingNER tags for named entities.THe model is trained using the Trainer class from the Huggingface Transformer library. Training arguments such as evaluation strategy, learning rate and number of epochs are specified top optimized the model's performance.
+This project implements a Bangla-Name-Extractor by finetuning DistilBERT on the Wikiann dataset for named entity recognition(NER). The dataset consists of three splits - train, test, and validation, each containing tokenized text data along with corresponding NER tags for named entities. The model is trained using the Trainer class from the Huggingface Transformer library. Training arguments such as evaluation strategy, learning rate, and number of epochs are specified to optimize the model's performance.
 
 ## Results
 
@@ -14,13 +14,11 @@ After training for three epochs, the model achieves remarkable performance on th
 ## DEMO
 
 ```
-sentence = "আফজালুর রহমান বলেন, সবার হাতে হাতে প্রশ্ন দেখে তিনি ভেবেছিলেন এটি ভুয়া প্রশ্ন।"
+sentence = "আফজালুর রহমান বলেন, সবার হাতে হাতে প্রশ্ন দেখে তিনি ভেবেছিলেন এটি ভুয়া প্রশ্ন। উত্তম কুমার ভট্টাচার্য্য এ কথার সাথে দ্বিমত পোশষণ করেন।"
+
 tokens_ner = token_classifier(sentence)
 
 for ner in tokens_ner:
-    if ner["entity_group"] == "PER":
-        print(ner["word"])
-```
-```
-Output: "আফজালুর রহমান"
+  if ner["entity_group"] == "PER":
+    print(ner["word"])
 ```
