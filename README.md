@@ -1,6 +1,13 @@
-# Person-Name-Extractor-for-Bangla
+# PERSON NAME EXTRACTOR FOR BANGLA
 
-This project implements a Bangla-Name-Extractor by finetuning DistilBERT on the Wikiann dataset for named entity recognition(NER). The dataset consists of three splits - train, test, and validation, each containing tokenized text data along with corresponding NER tags for named entities. The model is trained using the Trainer class from the Huggingface Transformer library. Training arguments such as evaluation strategy, learning rate, and number of epochs are specified to optimize the model's performance.
+We're building a Named Entity Recognition (NER) model to extract names from Bangla text. The dataset we're using is the Wikiann dataset, which contains labeled data for various languages, including Bangla.
+
+Here's a brief overview of the steps involved:
+
+- **Dataset**: We use Wikiann's Bangla subset, which includes training, validation, and test sets with tokenized text and named entity tags.
+- **Model**: Our approach involves fine-tuning a pre-trained Bangla BERT model to recognize named entities in the Bangla language.
+- **Training and Evaluation**: We train the model on the Wikiann training set and evaluate its performance using precision, recall, and F1-score on the validation set.
+- **Deployment**: After training, we save the fine-tuned model and test it on unseen Bangla text to ensure accurate extraction of names and other entities.
 
 ## Results
 
