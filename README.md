@@ -22,3 +22,9 @@ for ner in tokens_ner:
   if ner["entity_group"] == "PER":
     print(ner["word"])
 ```
+
+```
+Output:
+আফজালুর রহমান
+উত্তম কুমার ভট্টাচার্য্য
+```
